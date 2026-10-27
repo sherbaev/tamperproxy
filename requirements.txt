@@ -1,0 +1,6 @@
+# mitmproxy: the proxy + mitmweb traffic UI.
+mitmproxy>=11.0
+# uiautomator2 is the PYTHON package (openatx), not Appium's driver. Only needed for run.sh specs.
+uiautomator2>=3.0
+# Optional: full spec validation in run.sh.
+jsonschema>=4.0

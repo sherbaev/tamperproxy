@@ -1,0 +1,52 @@
+{
+  "name": "posts-empty-state",
+  "summary": "The posts screen shows its empty state when the list call returns []",
+  "device": {
+    "app_package": "com.example.app.debug"
+  },
+  "mappings": [
+    {
+      "url_regex": "/posts(\\?|$)",
+      "local_file": "mocks/posts_empty.json",
+      "methods": [
+        "GET"
+      ]
+    }
+  ],
+  "device_steps": [
+    {
+      "action": "launch_app"
+    },
+    {
+      "action": "tap_text",
+      "text": "Accept",
+      "timeout": 5,
+      "optional": true
+    },
+    {
+      "action": "tap_text",
+      "text": "Posts",
+      "timeout": 20
+    },
+    {
+      "action": "wait",
+      "seconds": 2
+    },
+    {
+      "action": "screenshot",
+      "name": "posts_empty"
+    }
+  ],
+  "assertions": {
+    "ui": {
+      "type": "text_present",
+      "text": "No posts yet",
+      "timeout": 15
+    },
+    "traffic": {
+      "expect_served": [
+        "/posts(\\?|$)"
+      ]
+    }
+  }
+}

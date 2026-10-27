@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tamper panel</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='4' fill='%230F172A'/%3E%3Ccircle cx='8' cy='8' r='3.5' fill='%2322C55E'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="panel.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="m7 4 13 8-13 8Z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="i-radio" viewBox="0 0 24 24"><path d="M4.9 19.1a10 10 0 0 1 0-14.2M7.8 16.2a6 6 0 0 1 0-8.4M16.2 7.8a6 6 0 0 1 0 8.4M19.1 4.9a10 10 0 0 1 0 14.2"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-rules" viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h6"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+</svg>
+
+<header>
+  <div class="brand"><span class="logo" aria-hidden="true"></span>Tamper panel</div>
+  <div class="status" id="status">
+    <span class="dot" aria-hidden="true"></span>
+    <span>Proxy <span class="addr" id="proxyAddr">…</span></span>
+    <button class="icon-btn" id="copyProxy" aria-label="Copy proxy address" title="Copy proxy address"><svg class="i"><use href="#i-copy"/></svg></button>
+  </div>
+  <div class="chips" id="settingsChips" aria-label="Active proxy settings"></div>
+  <span class="spacer"></span>
+  <button class="btn ghost" id="settingsBtn"><svg class="i" aria-hidden="true"><use href="#i-gear"/></svg>Settings</button>
+  <button class="btn ghost" id="setupBtn"><svg class="i" aria-hidden="true"><use href="#i-phone"/></svg>Device setup</button>
+  <a class="btn ghost" id="webLink" href="#" target="_blank" rel="noopener" hidden title="mitmproxy's own raw inspector (optional)"><svg class="i" aria-hidden="true"><use href="#i-ext"/></svg>Raw inspector</a>
+  <button class="icon-btn" id="themeBtn" aria-label="Switch to light theme" title="Switch theme"><svg class="i"><use href="#i-sun"/></svg></button>
+</header>
+
+<section class="paused-bar" id="pausedBar" aria-live="assertive" hidden>
+  <div class="paused-head"><svg class="i" aria-hidden="true"><use href="#i-pause"/></svg>
+    <strong id="pausedTitle">1 call paused at a breakpoint</strong>
+    <span class="muted" id="pausedHint">Decide before your app gives up.</span></div>
+  <ul class="list" id="pausedList"></ul>
+</section>
+
+<main>
+  <section class="panel" aria-labelledby="rulesTitle">
+    <div class="panel-head">
+      <h2 id="rulesTitle">Rules</h2>
+      <span class="count" id="rulesCount">0</span>
+      <span class="spacer"></span>
+      <button class="btn primary" id="addBtn"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>New rule <kbd aria-hidden="true">N</kbd></button>
+    </div>
+    <div class="banner" id="errorBanner" role="alert" hidden></div>
+    <p class="hint-line" style="margin:0">First matching rule wins. <b>Map Local</b> answers without the backend,
+      <b>Rewrite</b> changes the real response, <b>Delay</b> slows it, <b>Breakpoint</b> pauses it so you can edit it live.</p>
+    <ul class="list scroll" id="rulesList" aria-label="Rules"></ul>
+  </section>
+
+  <section class="panel" id="rightPanel">
+    <div class="tabbar" role="tablist" aria-label="Right panel">
+      <button role="tab" id="tabTraffic" aria-selected="true" aria-controls="paneTraffic"><svg class="i" aria-hidden="true"><use href="#i-radio"/></svg>Traffic <span class="count" id="trafficCount">0</span></button>
+      <button role="tab" id="tabEndpoints" aria-selected="false" aria-controls="paneEndpoints"><svg class="i" aria-hidden="true"><use href="#i-list"/></svg>Endpoints <span class="count" id="endpointCount">0</span></button>
+    </div>
+
+    <div id="paneTraffic" role="tabpanel" aria-labelledby="tabTraffic">
+      <div class="panel-head">
+        <div class="filters" role="group" aria-label="Show">
+          <button data-filter="all" aria-pressed="true">All</button>
+          <button data-filter="focus" aria-pressed="false" id="focusFilter" hidden>Focus</button>
+          <button data-filter="tampered" aria-pressed="false">Tampered</button>
+          <button data-filter="errors" aria-pressed="false">Errors</button>
+        </div>
+        <div class="search">
+          <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+          <label class="sr-only" for="trafficFilter">Filter traffic by URL</label>
+          <input id="trafficFilter" placeholder="Filter  /" autocomplete="off">
+        </div>
+        <span class="paused-note">paused</span>
+        <button class="icon-btn" id="pauseBtn" aria-pressed="false" aria-label="Pause live updates" title="Pause live updates"><svg class="i"><use href="#i-pause"/></svg></button>
+      </div>
+      <div class="focus-bar" id="focusBar" hidden>
+        <span class="muted"><svg class="i" aria-hidden="true"><use href="#i-target"/></svg> Focused hosts</span>
+        <span class="focus-chips" id="focusChips"></span>
+        <button class="btn small subtle" id="unfocusAll">Unfocus all</button>
+      </div>
+      <p class="hint-line" style="margin:0">Click a request to see its full request and response. <span class="mono">◎</span> focuses its host.</p>
+      <ul class="list scroll" id="trafficList" aria-label="Recent requests"></ul>
+    </div>
+
+    <div id="paneEndpoints" role="tabpanel" aria-labelledby="tabEndpoints" hidden>
+      <div class="panel-head">
+        <div class="filters" role="group" aria-label="Environment" id="envFilters"></div>
+        <div class="search wide">
+          <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
+          <label class="sr-only" for="endpointFilter">Search endpoints</label>
+          <input id="endpointFilter" placeholder="Search path or API, e.g. orders" autocomplete="off">
+        </div>
+        <label class="check"><input type="checkbox" id="withTampers"> with tampers</label>
+      </div>
+      <p class="hint-line" style="margin:0">From your profile's <span class="mono">endpoints.txt</span> + <span class="mono">base-urls.txt</span>.
+        <b>N tampers</b> = files in your tamper folder named after that endpoint.</p>
+      <div class="scroll" id="endpointList"></div>
+    </div>
+  </section>
+</main>
+
+<dialog id="editor" aria-labelledby="editorTitle">
+  <div class="dlg-head">
+    <h2 id="editorTitle">New rule</h2>
+    <button class="icon-btn" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="dlg-body">
+    <div class="section">
+      <p class="section-title"><span class="num">1</span>Match</p>
+      <div class="field">
+        <label for="endpointInput">Endpoint</label>
+        <input id="endpointInput" list="endpointOptions" placeholder="Type to search, e.g. orders" autocomplete="off">
+        <datalist id="endpointOptions"></datalist>
+        <p class="help">Picking one builds the regex: <span class="mono">{id}</span> matches one path segment, and the ending stops prefix matches.</p>
+      </div>
+      <div class="grid-match">
+        <div><label for="methodSel">Method</label>
+          <select id="methodSel"><option value="">Any</option><option>GET</option><option>POST</option><option>PUT</option><option>PATCH</option><option>DELETE</option></select></div>
+        <div><label for="regexInput">URL regex</label>
+          <input id="regexInput" class="mono-input" placeholder="/api/v2/orders(\?|$)" aria-describedby="regexError regexMatches" autocomplete="off" spellcheck="false">
+          <p class="error-text" id="regexError" hidden></p>
+          <div class="matches" id="regexMatches" aria-live="polite"></div></div>
+      </div>
+      <div class="field" style="margin-top:12px;margin-bottom:0">
+        <label for="noteInput">Note <span class="faint">(optional)</span></label>
+        <input id="noteInput" placeholder="What this rule is for, e.g. contract call fails → error screen">
+      </div>
+    </div>
+
+    <div class="section">
+      <p class="section-title"><span class="num">2</span>Action</p>
+      <div class="choice" id="actionChoice" role="group" aria-label="Action">
+        <button data-action="map_local" aria-pressed="true"><strong><span class="badge b-map_local">Map Local</span></strong><span>Answer from a file, backend not called</span></button>
+        <button data-action="map_remote" aria-pressed="false"><strong><span class="badge b-map_remote">Map Remote</span></strong><span>Send the call to another host</span></button>
+        <button data-action="rewrite" aria-pressed="false"><strong><span class="badge b-rewrite">Rewrite</span></strong><span>Change headers, status or body</span></button>
+        <button data-action="delay" aria-pressed="false"><strong><span class="badge b-delay">Delay only</span></strong><span>Real response, just later</span></button>
+        <button data-action="breakpoint" aria-pressed="false"><strong><span class="badge b-breakpoint">Breakpoint</span></strong><span>Pause the call and edit it live</span></button>
+      </div>
+    </div>
+
+    <div class="section" id="mapLocalBox">
+      <p class="section-title"><span class="num">3</span>Response</p>
+      <div class="tabs" id="sourceTabs" role="tablist" aria-label="Response body source">
+        <button role="tab" data-source="stock" aria-selected="true">Ready response</button>
+        <button role="tab" data-source="file" aria-selected="false">Tamper file</button>
+        <button role="tab" data-source="paste" aria-selected="false">Paste body</button>
+      </div>
+      <div id="stockBox"><div class="stock" id="stockList" role="group" aria-label="Ready responses"></div></div>
+      <div id="fileBox" hidden>
+        <label for="fileSearch">Search the tamper folders</label>
+        <input id="fileSearch" placeholder="Words in the file name, e.g. orders empty" autocomplete="off">
+        <div class="files" id="fileResults" role="group" aria-label="Matching files"></div>
+      </div>
+      <div id="pasteBox" hidden>
+        <div class="field"><label for="pasteName">Save as (in mocks/)</label><input id="pasteName" placeholder="orders_empty.json"></div>
+        <label for="pasteBody">Body</label>
+        <textarea id="pasteBody" placeholder='{"items": [], "count": 0}' spellcheck="false"></textarea>
+      </div>
+      <div class="selected" id="selectedLine"><svg class="i" aria-hidden="true"><use href="#i-file"/></svg><span>Selected: <span class="mono" id="selectedFile">none</span></span></div>
+      <pre class="preview" id="filePreview" hidden></pre>
+      <div class="grid-2" style="margin-top:12px">
+        <div><label for="statusInput">Status code</label><input id="statusInput" type="number" min="100" max="599" value="200"></div>
+        <div><label for="ctypeInput">Content-Type</label><input id="ctypeInput" value="application/json"></div>
+      </div>
+    </div>
+
+    <div class="section" id="mapRemoteBox" hidden>
+      <p class="section-title"><span class="num">3</span>Send to</p>
+      <label for="remoteTarget">Target</label>
+      <input id="remoteTarget" class="mono-input" placeholder="https://staging.example.com" autocomplete="off" spellcheck="false">
+      <p class="help">Scheme, host and port are replaced; the path and query stay. Put a path in the target
+        (<span class="mono">https://staging.example.com/v2/user</span>) to replace the path too.</p>
+    </div>
+
+    <div class="section" id="rewriteBox" hidden>
+      <p class="section-title"><span class="num">3</span>Changes</p>
+      <div class="grid-2">
+        <div><label for="rwStatus">New status code</label><input id="rwStatus" type="number" min="100" max="599" placeholder="keep the real one"></div>
+      </div>
+      <div class="grid-2" style="margin-top:12px">
+        <div><label for="rwReqHeaders">Request headers <span class="faint">(sent to the server)</span></label>
+          <textarea id="rwReqHeaders" style="min-height:64px" placeholder="Authorization: Bearer expired&#10;Accept-Language: fr-FR" spellcheck="false"></textarea></div>
+        <div><label for="rwHeaders">Response headers <span class="faint">(sent to the app)</span></label>
+          <textarea id="rwHeaders" style="min-height:64px" placeholder="Cache-Control: no-store" spellcheck="false"></textarea></div>
+      </div>
+      <p class="help"><span class="mono">Name: value</span> sets a header, <span class="mono">Name:</span> with nothing after removes it.</p>
+      <span class="label">Body find → replace <span class="faint">(plain text, every occurrence)</span></span>
+      <div id="rwReplaces"></div>
+      <button class="btn small" id="addReplace"><svg class="i" aria-hidden="true"><use href="#i-plus"/></svg>Add replace</button>
+    </div>
+
+    <div class="section" id="breakpointBox" hidden>
+      <p class="section-title"><span class="num">3</span>Pause on</p>
+      <div class="filters" id="pauseOn" role="group" aria-label="Pause on">
+        <button data-pause="request" aria-pressed="false">Request</button>
+        <button data-pause="response" aria-pressed="true">Response</button>
+        <button data-pause="both" aria-pressed="false">Both</button>
+      </div>
+      <p class="help">The call waits in this panel: edit status, headers or body, then continue, abort, or answer with a ready response.
+        The app gives up after its read timeout (set it in Settings).</p>
+    </div>
+
+    <div class="section" id="timingBox">
+      <p class="section-title"><span class="num" id="timingNum">4</span>Timing</p>
+      <div class="grid-2">
+        <div><label for="delayInput">Delay before answering (ms)</label><input id="delayInput" type="number" min="0" step="100" value="0"></div>
+      </div>
+    </div>
+  </div>
+  <div class="dlg-foot">
+    <span class="muted"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> save · <kbd>Esc</kbd> cancel</span>
+    <button class="btn" data-close>Cancel</button>
+    <button class="btn primary" id="saveBtn">Save rule</button>
+  </div>
+</dialog>
+
+<dialog id="inspect" class="wide" aria-labelledby="inspectTitle">
+  <div class="dlg-head">
+    <h2 id="inspectTitle">Request</h2>
+    <button class="icon-btn" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="dlg-body">
+    <div class="inspect-meta" id="inspectMeta"></div>
+    <div class="host-actions" id="hostActions">
+      <span class="muted">Host <span class="mono" id="inspectHost"></span>:</span>
+      <button class="btn small subtle" data-host-action="focus">Focus</button>
+      <button class="btn small subtle" data-host-action="ssl-skip">Don't decrypt (SSL off)</button>
+      <button class="btn small subtle" data-host-action="block">Block</button>
+    </div>
+    <div class="tabs" id="inspectTabs" role="tablist" aria-label="Request or response">
+      <button role="tab" data-part="response" aria-selected="true">Response</button>
+      <button role="tab" data-part="request" aria-selected="false">Request</button>
+    </div>
+    <div id="inspectPart"></div>
+  </div>
+  <div class="dlg-foot">
+    <span class="muted" id="inspectHint"></span>
+    <button class="btn" id="inspectSave"><svg class="i" aria-hidden="true"><use href="#i-save"/></svg>Save response as mock</button>
+    <button class="btn" id="inspectBreak">Breakpoint</button>
+    <button class="btn" id="inspectRewrite">Rewrite</button>
+    <button class="btn primary" id="inspectMock">Mock this</button>
+  </div>
+</dialog>
+
+<dialog id="pauseDlg" class="wide" aria-labelledby="pauseTitle">
+  <div class="dlg-head">
+    <h2 id="pauseTitle">Paused</h2>
+    <span class="countdown" id="pauseCountdown"></span>
+  </div>
+  <div class="dlg-body">
+    <p class="pause-url mono" id="pauseUrl"></p>
+    <div class="grid-2" id="pauseStatusRow">
+      <div><label for="pauseStatus">Status code</label><input id="pauseStatus" type="number" min="100" max="599"></div>
+    </div>
+    <div class="field" style="margin-top:12px">
+      <label for="pauseHeaders">Headers <span class="faint">(one per line, Name: value)</span></label>
+      <textarea id="pauseHeaders" style="min-height:90px" spellcheck="false"></textarea>
+    </div>
+    <div class="field">
+      <div class="label-row"><label for="pauseBody">Body</label>
+        <button class="btn small subtle" id="pauseFormat">Format JSON</button></div>
+      <textarea id="pauseBody" style="min-height:200px" spellcheck="false"></textarea>
+      <p class="help" id="pauseBodyNote" hidden></p>
+    </div>
+    <div class="respond-row" id="pauseRespondRow">
+      <label for="pauseStock">Or answer without calling the backend</label>
+      <div class="respond-controls"><select id="pauseStock"></select>
+        <button class="btn" id="pauseRespond">Respond</button></div>
+    </div>
+  </div>
+  <div class="dlg-foot">
+    <span class="muted"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> continue with edits</span>
+    <button class="btn danger-btn" id="pauseAbort">Abort</button>
+    <button class="btn" id="pauseAsIs">Continue unchanged</button>
+    <button class="btn primary" id="pauseContinue">Continue with edits</button>
+  </div>
+</dialog>
+
+<dialog id="setup" aria-labelledby="setupTitle">
+  <div class="dlg-head">
+    <h2 id="setupTitle">Device setup</h2>
+    <button class="icon-btn" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="dlg-body">
+    <div class="tabs" id="setupTabs" role="tablist" aria-label="Device">
+      <button role="tab" data-device="android" aria-selected="true">Android phone</button>
+      <button role="tab" data-device="ios" aria-selected="false">iPhone / iPad</button>
+      <button role="tab" data-device="ios-sim" aria-selected="false">iOS Simulator</button>
+      <button role="tab" data-device="android-emu" aria-selected="false">Android emulator</button>
+    </div>
+    <div class="copy-line" style="margin-bottom:12px">Proxy address <code id="setupAddr">…</code>
+      <button class="btn small" id="copySetup"><svg class="i" aria-hidden="true"><use href="#i-copy"/></svg>Copy</button></div>
+    <ol class="steps" data-steps="android">
+      <li>Wi-Fi settings → your network → proxy <b>Manual</b> → the address above (or start with <span class="mono">./proxy.sh --adb</span>).</li>
+      <li>Open <span class="mono">http://mitm.it</span> → Android → install the certificate (Settings → Security → Install a certificate → CA).</li>
+      <li>Your app must trust user certificates: debug builds with a <span class="mono">network_security_config</span> that includes <span class="mono">&lt;certificates src="user"/&gt;</span>.</li>
+      <li>When done: Wi-Fi proxy back to <b>None</b>.</li>
+    </ol>
+    <ol class="steps" data-steps="ios" hidden>
+      <li>Settings → Wi-Fi → (i) on your network → Configure Proxy → <b>Manual</b> → the address above.</li>
+      <li>Open <span class="mono">http://mitm.it</span> in <b>Safari</b> → Apple → Allow → Settings → General → VPN &amp; Device Management → install the profile.</li>
+      <li>Settings → General → About → <b>Certificate Trust Settings</b> → turn on full trust for mitmproxy (without this HTTPS fails).</li>
+      <li>Apps with certificate pinning will not load through any proxy; use a build without pinning.</li>
+      <li>When done: Configure Proxy back to <b>Off</b> (and remove the profile if you like).</li>
+    </ol>
+    <ol class="steps" data-steps="ios-sim" hidden>
+      <li>Install the certificate into the booted simulator: <span class="mono">./proxy.sh cert-ios-sim</span>.</li>
+      <li>The simulator uses the Mac's proxy: start with <span class="mono">./proxy.sh --system-proxy</span> (sets the Mac's HTTP/HTTPS proxy and restores it on Ctrl+C).</li>
+      <li>Restart the app in the simulator; requests show up under Traffic.</li>
+    </ol>
+    <ol class="steps" data-steps="android-emu" hidden>
+      <li>Use a "Google APIs" image (not "Google Play") and run <span class="mono">./proxy.sh cert-emulator</span> once: the certificate becomes a system one, every app trusts it.</li>
+      <li>Proxy: host <span class="mono">10.0.2.2</span>, same port (Wi-Fi settings, or <span class="mono">./proxy.sh --adb</span>).</li>
+    </ol>
+  </div>
+</dialog>
+
+<dialog id="settingsDlg" class="wide" aria-labelledby="settingsTitle">
+  <div class="dlg-head">
+    <h2 id="settingsTitle">Proxy settings</h2>
+    <button class="icon-btn" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button>
+  </div>
+  <div class="dlg-body settings-grid">
+    <div class="section">
+      <p class="section-title">SSL proxying</p>
+      <div class="radios" id="sslMode" role="radiogroup" aria-label="Which HTTPS hosts are decrypted">
+        <label><input type="radio" name="sslMode" value="all"> Decrypt all hosts</label>
+        <label><input type="radio" name="sslMode" value="only"> Only these hosts</label>
+        <label><input type="radio" name="sslMode" value="except"> All except these hosts</label>
+      </div>
+      <label for="sslHosts" class="sr-only">SSL hosts</label>
+      <textarea id="sslHosts" style="min-height:84px" placeholder="api.example.com&#10;*.example.com" spellcheck="false"></textarea>
+      <p class="help">One host per line, <span class="mono">*.example.com</span> for subdomains. Hosts that are not decrypted pass through untouched:
+        no rules, not listed in Traffic. Applies to new connections (reopen the app).</p>
+    </div>
+    <div class="section">
+      <p class="section-title"><label class="switch"><input type="checkbox" role="switch" id="blockOn" aria-label="Block list on"><span></span></label> Block list</p>
+      <label for="blockHosts" class="sr-only">Blocked hosts</label>
+      <textarea id="blockHosts" style="min-height:84px" placeholder="analytics.example.com" spellcheck="false"></textarea>
+      <p class="help">Calls to these hosts get a 403 and never reach the server (e.g. trackers, ads).</p>
+    </div>
+    <div class="section">
+      <p class="section-title">Other</p>
+      <label class="check big"><input type="checkbox" id="noCache"> No caching <span class="faint">(strip ETag / If-None-Match, send no-store)</span></label>
+      <div class="grid-2" style="margin-top:12px">
+        <div><label for="latencyMs">Extra latency on every call (ms)</label><input id="latencyMs" type="number" min="0" max="60000" step="100"></div>
+        <div><label for="appTimeout">App read timeout (s)</label><input id="appTimeout" type="number" min="5" max="600">
+          <p class="help">Only for the breakpoint countdown.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="dlg-foot">
+    <span class="muted">Saved to <span class="mono">settings.json</span>, applied right away.</span>
+    <button class="btn" data-close>Cancel</button>
+    <button class="btn primary" id="settingsSave">Save settings</button>
+  </div>
+</dialog>
+
+<div id="toast" role="status" aria-live="polite"><span id="toastText"></span><button id="toastAction" hidden></button></div>
+
+<script>const TOKEN = "__PANEL_TOKEN__";</script>
+<script src="panel.js"></script>
+<script src="panel-rules.js"></script>
+<script src="panel-traffic.js"></script>
+<script src="panel-endpoints.js"></script>
+<script src="panel-pause.js"></script>
+<script src="panel-settings.js"></script>
+</body>
+</html>

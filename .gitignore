@@ -1,0 +1,21 @@
+# your own state: never committed
+/rules.json
+/settings.json
+/endpoints.txt
+/base-urls.txt
+mocks/*
+!mocks/.gitkeep
+logs/
+artifacts/
+
+# profiles: only the example is shared; its runtime files stay local
+profiles/*
+!profiles/README.md
+!profiles/example/
+profiles/example/rules.json
+profiles/example/settings.json
+profiles/example/artifacts/
+
+__pycache__/
+*.pyc
+.DS_Store

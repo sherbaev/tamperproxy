@@ -1,0 +1,9 @@
+# Base URLs of your app's backends, per environment: KEY  ENV  URL
+# Environments are any names you like (dev/staging/prod, qa/prod, ...); the panel shows one button each.
+# endpoints.txt says which KEY each endpoint group uses.
+
+# JSONPLACEHOLDER: Posts, Users
+JSONPLACEHOLDER      live  https://jsonplaceholder.typicode.com/
+
+# HTTPBIN: Echo
+HTTPBIN              live  https://httpbin.org/

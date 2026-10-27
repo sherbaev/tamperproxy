@@ -1,0 +1,6 @@
+{
+  "error": {
+    "status": 429,
+    "message": "Too Many Requests"
+  }
+}

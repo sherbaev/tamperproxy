@@ -1,0 +1,94 @@
+[
+  {
+    "id": "s1",
+    "enabled": true,
+    "note": "no posts -> empty state",
+    "url_regex": "/posts(\\?|$)",
+    "methods": [
+      "GET"
+    ],
+    "action": "map_local",
+    "local_file": "mocks/posts_empty.json",
+    "status_code": 200
+  },
+  {
+    "id": "s2",
+    "enabled": false,
+    "note": "long title -> check wrapping",
+    "url_regex": "/posts/[^/]+(\\?|$)",
+    "methods": [
+      "GET"
+    ],
+    "action": "map_local",
+    "local_file": "mocks/post_long_title.json",
+    "status_code": 200
+  },
+  {
+    "id": "s3",
+    "enabled": false,
+    "note": "user without email -> check the profile screen",
+    "url_regex": "/users/1(\\?|$)",
+    "methods": [
+      "GET"
+    ],
+    "action": "map_local",
+    "local_file": "mocks/user_missing_email.json",
+    "status_code": 200
+  },
+  {
+    "id": "s4",
+    "enabled": false,
+    "note": "comments fail -> error message",
+    "url_regex": "/posts/[^/]+/comments(\\?|$)",
+    "methods": [
+      "GET"
+    ],
+    "action": "map_local",
+    "local_file": "responses/500_server_error.json",
+    "status_code": 500
+  },
+  {
+    "id": "s5",
+    "enabled": false,
+    "note": "expired session on user 2",
+    "url_regex": "/users/2(\\?|$)",
+    "action": "rewrite",
+    "rewrite": {
+      "status_code": 401,
+      "request_headers": {
+        "Authorization": "Bearer expired"
+      },
+      "headers": {
+        "Cache-Control": "no-store"
+      },
+      "body_replace": []
+    }
+  },
+  {
+    "id": "s6",
+    "enabled": false,
+    "note": "send the echo API to another backend",
+    "url_regex": "httpbin\\.org/",
+    "action": "map_remote",
+    "target": "https://staging.example.com"
+  },
+  {
+    "id": "s7",
+    "enabled": false,
+    "note": "edit a user's todos live",
+    "url_regex": "/users/[^/]+/todos(\\?|$)",
+    "methods": [
+      "GET"
+    ],
+    "action": "breakpoint",
+    "pause_on": "response"
+  },
+  {
+    "id": "s8",
+    "enabled": false,
+    "note": "slow todos -> check the loader",
+    "url_regex": "/todos(\\?|$)",
+    "action": "delay",
+    "delay_ms": 3000
+  }
+]

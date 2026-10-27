@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tamper-proxy</title>
+<meta name="description" content="tamper-proxy: a free, open-source Charles Proxy alternative for mobile developers, built on mitmproxy.">
+<style>
+  /* Same tokens as the panel (lib/panel.css), so the slides look like the tool. */
+  :root, [data-theme="dark"] {
+    --bg: #0F172A; --surface: #1B2336; --surface-2: #222C40; --line: #2A3446;
+    --text: #F8FAFC; --muted: #94A3B8; --faint: #64748B;
+    --accent: #22C55E; --accent-soft: rgba(34, 197, 94, .14);
+    --map: #4ADE80; --rw: #FBBF24; --dl: #38BDF8; --bp: #C084FC; --mr: #2DD4BF; --bad: #F87171;
+    --code-bg: #0B1120; --shadow: 0 24px 60px rgba(0, 0, 0, .45);
+    color-scheme: dark;
+  }
+  [data-theme="light"] {
+    --bg: #F1F5F9; --surface: #FFFFFF; --surface-2: #F8FAFC; --line: #E2E8F0;
+    --text: #0F172A; --muted: #475569; --faint: #64748B;
+    --accent: #15803D; --accent-soft: rgba(21, 128, 61, .10);
+    --map: #15803D; --rw: #B45309; --dl: #0369A1; --bp: #7E22CE; --mr: #0F766E; --bad: #B91C1C;
+    --code-bg: #F8FAFC; --shadow: 0 24px 60px rgba(15, 23, 42, .16);
+    color-scheme: light;
+  }
+  :root {
+    --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--bg); color: var(--text); font: 18px/1.5 var(--sans); overflow: hidden; }
+  code, .mono { font-family: var(--mono); font-size: .86em; }
+  code { background: var(--code-bg); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px;
+         white-space: nowrap; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+  /* 16:9 stage, scaled to the window. */
+  .deck { position: fixed; inset: 0; display: grid; place-items: center; }
+  .stage { width: 1280px; height: 720px; position: relative; transform-origin: center; }
+  .slide { position: absolute; inset: 0; padding: 56px 72px 64px; display: flex; flex-direction: column;
+           opacity: 0; visibility: hidden; transition: opacity 220ms ease, visibility 0s linear 220ms; }
+  .slide.active { opacity: 1; visibility: visible; transition: opacity 220ms ease; }
+  @media (prefers-reduced-motion: reduce) { .slide, .slide.active { transition: none; } }
+
+  .kicker { font: 600 13px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--accent);
+            margin: 0 0 14px; }
+  h1 { font-size: 64px; line-height: 1.05; margin: 0 0 20px; letter-spacing: -.02em; }
+  h2 { font-size: 40px; line-height: 1.15; margin: 0 0 22px; letter-spacing: -.01em; }
+  h3 { font-size: 20px; margin: 0 0 8px; }
+  p { margin: 0 0 14px; }
+  .lead { font-size: 24px; color: var(--muted); max-width: 900px; }
+  .muted { color: var(--muted); }
+  ul.clean { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  ul.clean li { padding-left: 26px; position: relative; }
+  ul.clean li::before { content: ""; position: absolute; left: 4px; top: .62em; width: 8px; height: 8px;
+                        border-radius: 50%; background: var(--accent); }
+
+  .row { display: grid; gap: 32px; flex: 1; min-height: 0; }
+  .row.split { grid-template-columns: 1fr 1.45fr; align-items: center; }
+  .row.three { grid-template-columns: repeat(3, 1fr); align-items: stretch; }
+  .row.two { grid-template-columns: 1fr 1fr; align-items: stretch; }
+  .shot { width: 100%; border-radius: 12px; border: 1px solid var(--line); box-shadow: var(--shadow); display: block; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; }
+  .card p { color: var(--muted); font-size: 17px; }
+  .badge { display: inline-block; font: 600 13px/1 var(--sans); padding: 5px 9px; border-radius: 999px;
+           border: 1px solid currentColor; margin-bottom: 12px; }
+  .b-map { color: var(--map); } .b-rw { color: var(--rw); } .b-dl { color: var(--dl); }
+  .b-bp { color: var(--bp); } .b-mr { color: var(--mr); } .b-bad { color: var(--bad); }
+
+  pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 12px; padding: 18px 20px;
+        font: 15px/1.6 var(--mono); margin: 0; overflow: auto; white-space: pre; align-self: start; }
+  .k { color: var(--dl); } .s { color: var(--map); } .c { color: var(--faint); } .n { color: var(--rw); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--faint); font: 600 12px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+  td:first-child { color: var(--muted); }
+  td strong { color: var(--text); }
+
+  .cmd { display: grid; gap: 10px; }
+  .cmd div { display: grid; grid-template-columns: 330px 1fr; gap: 16px; align-items: baseline; }
+  .cmd code { font-size: 15px; justify-self: start; }
+  .cmd.devices div { grid-template-columns: 170px 1fr; }
+  .shot.tall { width: auto; max-width: 100%; max-height: 540px; justify-self: center; }
+
+  /* Title slide */
+  .title { justify-content: center; }
+  .title .mark { width: 64px; height: 64px; border-radius: 16px; background: var(--accent-soft);
+                 display: grid; place-items: center; margin-bottom: 28px; }
+  .title .mark svg { width: 34px; height: 34px; stroke: var(--accent); fill: none; stroke-width: 2;
+                     stroke-linecap: round; stroke-linejoin: round; }
+  .title .start { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+
+  /* Chrome */
+  .bar { position: fixed; left: 0; right: 0; bottom: 0; height: 4px; background: var(--line); }
+  .bar span { display: block; height: 100%; background: var(--accent); transition: width 220ms ease; }
+  .nav { position: fixed; right: 18px; bottom: 16px; display: flex; gap: 8px; align-items: center;
+         font: 13px var(--mono); color: var(--faint); }
+  .nav button { min-width: 44px; height: 44px; border-radius: 10px; border: 1px solid var(--line);
+                background: var(--surface); color: var(--text); font: 600 15px var(--sans); cursor: pointer; }
+  .nav button:hover { border-color: var(--accent); }
+
+  /* Narrow screens: one long page instead of a stage. */
+  @media (max-width: 860px) {
+    body { overflow: auto; font-size: 16px; }
+    .deck { position: static; display: block; padding: 0 16px 80px; }
+    .stage { width: auto; height: auto; transform: none !important; }
+    .slide { position: static; opacity: 1; visibility: visible; padding: 40px 0; border-bottom: 1px solid var(--line); }
+    .row.split, .row.three, .row.two { grid-template-columns: 1fr; }
+    .cmd div { grid-template-columns: 1fr; gap: 4px; }
+    h1 { font-size: 40px; } h2 { font-size: 28px; } .lead { font-size: 19px; }
+    table { font-size: 14px; } pre { font-size: 13px; }
+    .slide, .row > * { min-width: 0; }
+    code { white-space: normal; overflow-wrap: anywhere; }
+    .nav, .bar { display: none; }
+  }
+</style>
+</head>
+<body>
+<main class="deck" aria-roledescription="slide deck">
+<div class="stage" id="stage">
+
+  <section class="slide title" aria-label="1: tamper-proxy">
+    <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h10M4 12h16M4 17h7"/><circle cx="18" cy="7" r="2"/><circle cx="15" cy="17" r="2"/></svg></div>
+    <p class="kicker">Open source · MIT · built on mitmproxy</p>
+    <h1>tamper-proxy</h1>
+    <p class="lead">A free alternative to Charles Proxy for mobile developers. Mock, rewrite, redirect,
+      slow down or pause your app's HTTP(S) calls from a browser panel, on Android and iOS.</p>
+    <div class="start"><code>bash setup.sh</code><span class="muted">then</span><code>./proxy.sh</code>
+      <span class="muted">→ the panel opens in your browser</span></div>
+  </section>
+
+  <section class="slide" aria-label="2: Why">
+    <p class="kicker">Why</p>
+    <h2>Everything Charles does for app testing, without the license or the setup pain</h2>
+    <div class="row two">
+      <div class="card">
+        <h3>What hurts with Charles</h3>
+        <ul class="clean muted">
+          <li>Paid license per developer</li>
+          <li>Setups live inside one app: hard to share a mock with a teammate</li>
+          <li>Certificates and SSL settings redone on every machine</li>
+          <li>Nothing a script or a CI job can drive</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>What tamper-proxy gives you</h3>
+        <ul class="clean muted">
+          <li>Free and open source, runs locally (macOS / Linux)</li>
+          <li>Every rule and setting is a plain JSON file: share it, keep it next to a ticket</li>
+          <li>A browser panel: no desktop app to install</li>
+          <li>The same files work from the terminal, a test script or an AI assistant</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="3: Charles to tamper-proxy">
+    <p class="kicker">Coming from Charles</p>
+    <h2>Same ideas, same names</h2>
+    <table>
+      <thead><tr><th>Charles</th><th>tamper-proxy</th></tr></thead>
+      <tbody>
+        <tr><td>Map Local</td><td><strong>Map Local</strong> rule: ready error bodies, your mock files, or a pasted body</td></tr>
+        <tr><td>Map Remote</td><td><strong>Map Remote</strong> rule: same call, another host (path and query kept)</td></tr>
+        <tr><td>Rewrite</td><td><strong>Rewrite</strong> rule: status, body, request headers and response headers</td></tr>
+        <tr><td>Breakpoints</td><td><strong>Breakpoint</strong> rule: edit, continue, abort or answer live</td></tr>
+        <tr><td>Throttling</td><td>Global latency + per-rule <strong>Delay</strong></td></tr>
+        <tr><td>SSL Proxying settings</td><td><strong>Settings → SSL proxying</strong>: all / only these / all except these</td></tr>
+        <tr><td>Focus</td><td><strong>◎</strong> on any request in the Traffic list</td></tr>
+        <tr><td>Block List · No Caching</td><td><strong>Settings → Block list</strong> (403) · <strong>No caching</strong></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="slide" aria-label="4: The panel">
+    <p class="kicker">The panel</p>
+    <div class="row split">
+      <div>
+        <h2>Rules on the left, live traffic on the right</h2>
+        <ul class="clean muted">
+          <li>Every call the app makes, tagged with what happened to it</li>
+          <li>One click on a call: <strong>Mock</strong>, <strong>Rewrite</strong> or a breakpoint, pre-filled</li>
+          <li>Inspect headers and body, <em>Save response as mock</em></li>
+          <li>Filters: Focus, Tampered, Errors · search · pause</li>
+        </ul>
+      </div>
+      <img class="shot" src="img/panel.png" alt="The tamper panel: rules list and the traffic list with Map Local, Rewrite, Map Remote, Delay and Blocked tags">
+    </div>
+  </section>
+
+  <section class="slide" aria-label="5: Map Local">
+    <p class="kicker"><span class="b-map">Map Local</span></p>
+    <div class="row split">
+      <div>
+        <h2>Answer from a file. The backend is never called.</h2>
+        <ul class="clean muted">
+          <li><strong>Ready response</strong>: 15 bodies included, from 200 / 204 to 401, 404, 429, 500, 503…</li>
+          <li><strong>Tamper file</strong>: search your own folder of mocks by name</li>
+          <li><strong>Paste body</strong>: saved into <code>mocks/</code> for you</li>
+          <li>Status code, content type and a delay per rule</li>
+        </ul>
+      </div>
+      <img class="shot" src="img/editor-map-local.png" alt="Rule editor with the Map Local action and a list of matching mock files">
+    </div>
+  </section>
+
+  <section class="slide" aria-label="6: Rewrite and headers">
+    <p class="kicker"><span class="b-rw">Rewrite</span></p>
+    <div class="row split">
+      <div>
+        <h2>Change the real call, both ways</h2>
+        <ul class="clean muted">
+          <li><strong>Request headers</strong> before the call leaves (expired token, other language)</li>
+          <li><strong>Response headers</strong> the app receives (<code>Cache-Control</code>, cookies)</li>
+          <li><code>Name:</code> with no value removes a header</li>
+          <li>New status code and find → replace in the body</li>
+        </ul>
+      </div>
+      <img class="shot tall" src="img/editor-rewrite.png" alt="Rule editor with the Rewrite action: status 401, a request header and a response header">
+    </div>
+  </section>
+
+  <section class="slide" aria-label="7: Map Remote, Delay, Block">
+    <p class="kicker">More rules and settings</p>
+    <h2>Redirect, slow down, block</h2>
+    <div class="row three">
+      <div class="card"><span class="badge b-mr">Map Remote</span>
+        <h3>Same call, another backend</h3>
+        <p>Point one endpoint at staging or a local stub. Path and query are kept, unless the target sets its own path.</p></div>
+      <div class="card"><span class="badge b-dl">Delay</span>
+        <h3>Check loaders and timeouts</h3>
+        <p>A delay on one rule, or extra latency on every call from Settings.</p></div>
+      <div class="card"><span class="badge b-bad">Blocked</span>
+        <h3>Silence trackers and ads</h3>
+        <p>Hosts on the Block list get a 403 and never reach the server.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="8: Breakpoints">
+    <p class="kicker"><span class="b-bp">Breakpoint</span></p>
+    <div class="row split">
+      <div>
+        <h2>Pause a call and decide live</h2>
+        <ul class="clean muted">
+          <li>On the request, the response, or both</li>
+          <li>Edit status, headers, body → <strong>Continue</strong></li>
+          <li><strong>Abort</strong>: the app gets a connection error</li>
+          <li><strong>Respond</strong> with a ready body, the server is never called</li>
+          <li>A countdown shows how long until the app gives up</li>
+        </ul>
+      </div>
+      <img class="shot" src="img/breakpoint.png" alt="A paused response at a breakpoint, with editable status, headers and body">
+    </div>
+  </section>
+
+  <section class="slide" aria-label="9: Focus and settings">
+    <p class="kicker">Focus · Settings</p>
+    <div class="row split">
+      <div>
+        <h2>See only what matters</h2>
+        <ul class="clean muted">
+          <li><strong>◎</strong> on a request focuses its host; chips show what's focused, ✕ unfocuses</li>
+          <li><strong>SSL proxying</strong>: decrypt all, only some, or all except some hosts</li>
+          <li><strong>Block list</strong>, <strong>No caching</strong>, extra latency</li>
+          <li>Saved to <code>settings.json</code> and applied right away</li>
+        </ul>
+      </div>
+      <img class="shot" src="img/settings.png" alt="Proxy settings dialog: SSL proxying, Block list, No caching and latency">
+    </div>
+  </section>
+
+  <section class="slide" aria-label="10: Endpoints and profiles">
+    <p class="kicker">Endpoints · profiles</p>
+    <div class="row split">
+      <div>
+        <h2>Your API, ready to mock</h2>
+        <ul class="clean muted">
+          <li>One folder per app: <code>endpoints.txt</code>, <code>base-urls.txt</code>, <code>mocks/</code>, rules and settings</li>
+          <li>Base URLs per environment, one click to switch</li>
+          <li>For each endpoint: the mock files you already have</li>
+          <li>A sample ships in <code>profiles/example</code>; your own profiles are never committed</li>
+        </ul>
+        <p class="muted" style="margin-top:14px"><code>./proxy.sh --profile profiles/my-app</code></p>
+      </div>
+      <img class="shot" src="img/endpoints.png" alt="Endpoints tab listing endpoints per API with base URLs and Map Local / Rewrite buttons">
+    </div>
+  </section>
+
+  <section class="slide" aria-label="11: Devices">
+    <p class="kicker">Devices</p>
+    <h2>Android and iOS, phone or emulator</h2>
+    <div class="row two">
+      <div class="card cmd devices">
+        <div><strong>Android phone</strong><span class="muted">Wi-Fi proxy → the address, or <code>./proxy.sh --adb</code>; certificate from <code>mitm.it</code></span></div>
+        <div><strong>Android emulator</strong><span class="muted"><code>./proxy.sh cert-emulator</code>, proxy host <code>10.0.2.2</code></span></div>
+        <div><strong>iPhone / iPad</strong><span class="muted">Wi-Fi proxy → the address; profile from <code>mitm.it</code>, then full trust</span></div>
+        <div><strong>iOS Simulator</strong><span class="muted"><code>./proxy.sh cert-ios-sim</code> + <code>--system-proxy</code></span></div>
+      </div>
+      <div class="card">
+        <h3>Good to know</h3>
+        <ul class="clean muted">
+          <li>The panel's <strong>Device setup</strong> shows the exact address per device</li>
+          <li>Debug builds must trust user certificates and not pin (true for Charles too)</li>
+          <li>Switch the device proxy off when you're done: <code>./proxy.sh clear-adb-proxy</code></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="12: AI assistants">
+    <p class="kicker">Also from an AI assistant</p>
+    <div class="row two">
+      <div>
+        <h2>The same two files, read by people and by assistants</h2>
+        <ul class="clean muted">
+          <li><code>SKILL.md</code> / <code>AGENTS.md</code> teach Claude, Copilot, Cursor… how to use it</li>
+          <li>The assistant edits <code>rules.json</code>, the proxy reloads it, the panel shows it</li>
+          <li>Proof, not guesses: <code>logs/served.jsonl</code> records every mocked, rewritten, redirected, delayed or blocked call</li>
+          <li>Everything still works by hand: the panel is the main way</li>
+        </ul>
+      </div>
+      <pre aria-label="Example rule"><span class="c">// rules.json: the orders call fails</span>
+[
+  {
+    <span class="k">"note"</span>: <span class="s">"orders fail -> error screen"</span>,
+    <span class="k">"url_regex"</span>: <span class="s">"/api/orders(\\?|$)"</span>,
+    <span class="k">"methods"</span>: [<span class="s">"GET"</span>],
+    <span class="k">"action"</span>: <span class="s">"map_local"</span>,
+    <span class="k">"local_file"</span>: <span class="s">"responses/500_server_error.json"</span>,
+    <span class="k">"status_code"</span>: <span class="n">500</span>
+  }
+]
+
+<span class="c">// logs/served.jsonl</span>
+{<span class="k">"action"</span>: <span class="s">"map_local"</span>, <span class="k">"status"</span>: <span class="n">500</span>, <span class="k">"served"</span>: <span class="n">true</span>, …}</pre>
+    </div>
+  </section>
+
+  <section class="slide" aria-label="13: Get started">
+    <p class="kicker">Get started</p>
+    <h2>Two commands</h2>
+    <div class="card cmd" style="margin-bottom:24px">
+      <div><code>bash setup.sh</code><span class="muted">once: a Python venv with mitmproxy</span></div>
+      <div><code>./proxy.sh --profile profiles/example</code><span class="muted">proxy on :8080, panel opens on 127.0.0.1:8082</span></div>
+      <div><code>./proxy.sh --library ~/my-mocks</code><span class="muted">search your own mock folder from the editor</span></div>
+      <div><code>./proxy.sh --profile profiles/my-app</code><span class="muted">your endpoints, base URLs and settings</span></div>
+      <div><code>./run.sh --spec my.spec.json</code><span class="muted">repeatable Android check: mocks + taps + text on screen</span></div>
+    </div>
+    <p class="muted">Free, MIT licensed. Not affiliated with Charles Proxy or XK72; "Charles" is used only for comparison.</p>
+  </section>
+
+</div>
+</main>
+
+<div class="bar" aria-hidden="true"><span id="progress"></span></div>
+<nav class="nav" aria-label="Slides">
+  <span id="counter" aria-live="polite"></span>
+  <button id="prev" aria-label="Previous slide">←</button>
+  <button id="next" aria-label="Next slide">→</button>
+  <button id="theme" aria-label="Switch to light theme">◐</button>
+</nav>
+
+<script>
+"use strict";
+const slides = [...document.querySelectorAll(".slide")];
+const stage = document.getElementById("stage");
+let index = 0;
+
+function readHash() {
+  const n = parseInt(location.hash.slice(1), 10);
+  return Number.isInteger(n) && n >= 1 && n <= slides.length ? n - 1 : 0;
+}
+
+function show(next) {
+  index = Math.max(0, Math.min(slides.length - 1, next));
+  slides.forEach((slide, i) => {
+    slide.classList.toggle("active", i === index);
+    slide.setAttribute("aria-hidden", String(i !== index));
+  });
+  document.getElementById("counter").textContent = `${index + 1} / ${slides.length}`;
+  document.getElementById("progress").style.width = `${((index + 1) / slides.length) * 100}%`;
+  history.replaceState(null, "", `#${index + 1}`);
+}
+
+function fit() {
+  const scale = Math.min(window.innerWidth / 1280, (window.innerHeight - 8) / 720);
+  stage.style.transform = `scale(${scale})`;
+}
+
+document.getElementById("prev").addEventListener("click", () => show(index - 1));
+document.getElementById("next").addEventListener("click", () => show(index + 1));
+document.addEventListener("keydown", (event) => {
+  if (["ArrowRight", "PageDown", " "].includes(event.key)) { event.preventDefault(); show(index + 1); }
+  if (["ArrowLeft", "PageUp"].includes(event.key)) { event.preventDefault(); show(index - 1); }
+  if (event.key === "Home") show(0);
+  if (event.key === "End") show(slides.length - 1);
+});
+
+const themeButton = document.getElementById("theme");
+function setTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  themeButton.setAttribute("aria-label", theme === "dark" ? "Switch to light theme" : "Switch to dark theme");
+  try { localStorage.setItem("tamper-deck-theme", theme); } catch (error) { /* private mode: not remembered */ }
+}
+themeButton.addEventListener("click", () => setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark"));
+let savedTheme = null;
+try { savedTheme = localStorage.getItem("tamper-deck-theme"); } catch (error) { savedTheme = null; }
+setTheme(savedTheme || "dark");
+
+window.addEventListener("resize", fit);
+window.addEventListener("hashchange", () => show(readHash()));
+fit();
+show(readHash());
+</script>
+</body>
+</html>

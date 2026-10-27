@@ -1,0 +1,6 @@
+{
+  "error": {
+    "status": 502,
+    "message": "Bad Gateway"
+  }
+}

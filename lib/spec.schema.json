@@ -1,0 +1,367 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "tamper test spec",
+  "description": "Runnable spec for run.sh: mocks (mappings) + device steps + pass/fail checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "device",
+    "mappings",
+    "device_steps",
+    "assertions"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Short run name, used for the artifacts folder (e.g. conso-no-data).",
+      "pattern": "^[A-Za-z0-9._-]+$"
+    },
+    "summary": {
+      "type": "string",
+      "description": "One-line restatement of the fix intent (data, not an instruction)."
+    },
+    "proxy": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Where mitmproxy listens. Defaults are applied by the harness if omitted.",
+      "properties": {
+        "host": {
+          "type": "string",
+          "default": "0.0.0.0"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 8080
+        }
+      }
+    },
+    "device": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "app_package"
+      ],
+      "properties": {
+        "serial": {
+          "type": "string",
+          "description": "adb device serial. If omitted, the only attached device is used."
+        },
+        "app_package": {
+          "type": "string",
+          "description": "Android package under test, e.g. com.example.app",
+          "pattern": "^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z][a-zA-Z0-9_]*)+$"
+        },
+        "app_activity": {
+          "type": "string",
+          "description": "Optional explicit launch activity. If omitted, the monkey/default launcher intent is used."
+        }
+      }
+    },
+    "mappings": {
+      "type": "array",
+      "description": "Tamper rules used during the run (same format as rules.json, see lib/rules.py).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "url_regex"
+        ],
+        "properties": {
+          "url_regex": {
+            "type": "string",
+            "description": "Python re.search pattern matched against the full request URL."
+          },
+          "local_file": {
+            "type": "string",
+            "description": "Path (relative to the spec's folder, or absolute) to the mock response body."
+          },
+          "status_code": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 599,
+            "default": 200
+          },
+          "content_type": {
+            "type": "string",
+            "default": "application/json"
+          },
+          "methods": {
+            "type": "array",
+            "description": "HTTP methods this mapping applies to. Empty/omitted = all methods.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "GET",
+                "POST",
+                "PUT",
+                "PATCH",
+                "DELETE",
+                "HEAD",
+                "OPTIONS"
+              ]
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "note": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "map_local",
+              "rewrite",
+              "delay"
+            ],
+            "default": "map_local"
+          },
+          "delay_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 0
+          },
+          "rewrite": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "status_code": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "minimum": 100,
+                "maximum": 599
+              },
+              "headers": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "body_replace": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "find"
+                  ],
+                  "properties": {
+                    "find": {
+                      "type": "string"
+                    },
+                    "replace": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "device_steps": {
+      "type": "array",
+      "description": "Ordered UI actions driven via uiautomator2.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "action"
+        ],
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "launch_app",
+              "stop_app",
+              "wait",
+              "wait_text",
+              "tap_text",
+              "tap_desc",
+              "tap_id",
+              "tap_xy",
+              "input_text",
+              "clear_text",
+              "press",
+              "swipe",
+              "screenshot",
+              "rotate",
+              "unfreeze_rotation",
+              "wait_orientation",
+              "record_start",
+              "record_stop"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "env": {
+            "type": "string",
+            "description": "For input_text: read the value from this environment variable instead of 'text' (keeps secrets out of the spec)."
+          },
+          "desc": {
+            "type": "string"
+          },
+          "resource_id": {
+            "type": "string"
+          },
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          },
+          "key": {
+            "type": "string",
+            "enum": [
+              "back",
+              "home",
+              "enter",
+              "menu",
+              "recent",
+              "power"
+            ]
+          },
+          "seconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "timeout": {
+            "type": "number",
+            "minimum": 0,
+            "default": 10
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down",
+              "left",
+              "right"
+            ]
+          },
+          "orientation": {
+            "type": "string",
+            "description": "Target orientation for a 'rotate' or 'wait_orientation' step.",
+            "enum": [
+              "natural",
+              "left",
+              "right",
+              "upsidedown",
+              "portrait",
+              "landscape"
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "description": "For 'rotate': 'auto' tries programmatic rotation then falls back to prompting for a physical rotation; 'manual' prompts for a physical rotation directly (use for SCREEN_ORIENTATION_SENSOR screens).",
+            "enum": [
+              "auto",
+              "manual"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "description": "Filename label for a screenshot step."
+          },
+          "optional": {
+            "type": "boolean",
+            "description": "When true, a failed step is logged as skipped and the flow continues (for screens that only show up sometimes: onboarding, cookie pop-in, biometrics sheet)."
+          }
+        }
+      }
+    },
+    "assertions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ui",
+        "traffic"
+      ],
+      "properties": {
+        "ui": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ],
+          "description": "The on-screen pass condition derived from acceptance criteria.",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "text_present",
+                "text_absent",
+                "element_exists",
+                "element_absent"
+              ]
+            },
+            "text": {
+              "type": "string"
+            },
+            "resource_id": {
+              "type": "string"
+            },
+            "desc": {
+              "type": "string"
+            },
+            "timeout": {
+              "type": "number",
+              "minimum": 0,
+              "default": 10
+            }
+          }
+        },
+        "traffic": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "expect_served"
+          ],
+          "description": "The network pass condition: each regex must have been served from a mock with an accepted status.",
+          "properties": {
+            "expect_served": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string"
+              },
+              "description": "url_regex values that MUST have been served (map_local) or rewritten during the run."
+            },
+            "accept_status": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "description": "Status codes considered a pass. Default: any 2xx.",
+              "default": [
+                200,
+                201,
+                202,
+                203,
+                204
+              ]
+            }
+          }
+        }
+      }
+    },
+    "artifacts_dir": {
+      "type": "string",
+      "description": "Where screenshots and logs go. Default: ./artifacts/<name> next to the spec."
+    }
+  }
+}

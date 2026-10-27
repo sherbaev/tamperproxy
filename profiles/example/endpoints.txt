@@ -1,0 +1,22 @@
+# Your app's backend endpoints, one per line: METHOD  path (from the host root).
+# Group header: '# <Api> · <BASE KEY>'; the base URL per environment is in base-urls.txt.
+# {name} = path parameter. This example uses public demo APIs; replace it with your own.
+
+# Posts · JSONPLACEHOLDER
+GET    /posts
+GET    /posts/{id}
+GET    /posts/{id}/comments
+POST   /posts
+PUT    /posts/{id}
+DELETE /posts/{id}
+
+# Users · JSONPLACEHOLDER
+GET    /users
+GET    /users/{id}
+GET    /users/{id}/todos
+
+# Echo · HTTPBIN
+GET    /get
+POST   /post
+GET    /status/{code}
+GET    /delay/{seconds}
